@@ -1,0 +1,21 @@
+# .NET
+bin/
+obj/
+*.user
+
+# Node / React 
+node_modules/
+dist/
+
+# Ambiente
+.env
+.env.local
+
+# Editor
+.vs/
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
