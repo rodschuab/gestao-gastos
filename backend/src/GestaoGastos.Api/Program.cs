@@ -12,6 +12,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+const string CorsPolicyFrontend = "FrontendPolicy";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CorsPolicyFrontend, policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173")  // vite padrao
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -24,15 +36,26 @@ builder.Services.AddScoped<ITotalService, TotalService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+/*
+ Aplica as migrations pendentes automaticamente ao iniciar a aplicação e
+ mantem o banco de dados atualizado
+*/
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 // Middleware global de exceções
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseCors(CorsPolicyFrontend);
 
 app.UseHttpsRedirection();
 
