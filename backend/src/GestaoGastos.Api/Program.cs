@@ -18,6 +18,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Registro de Services na injeção de dependência.
 builder.Services.AddScoped<IPessoaService, PessoaService>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<ITotalService, TotalService>();
+
 
 
 var app = builder.Build();
